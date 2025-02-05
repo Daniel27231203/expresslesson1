@@ -6,7 +6,7 @@ const getAllTodo = async (req, res) => {
     try {
         res.status(200).send({
             success: true,
-            results: prisma.todo.findMany(),
+            results: await prisma.todo.findMany(),
         });
     }
     catch (e) {
@@ -24,7 +24,7 @@ const createTodo = async (req, res) => {
             id: prisma.todo.findMany.length + 1,
             title,
         };
-        prisma.todo.create({ data: newTodo });
+        await prisma.todo.create({ data: newTodo });
         res.status(200).send({
             message: "successfyl",
             data: newTodo,
@@ -61,7 +61,7 @@ const updateTodo = async (req, res) => {
 const deleteOnTodo = async (req, res) => {
     try {
         const id = Number(req.params.id);
-        const newTodo = prisma.todo.delete({ where: { id } });
+        const newTodo = await prisma.todo.delete({ where: { id } });
         res.status(200).send({
             message: `successfuly deleted`,
             data: newTodo,
