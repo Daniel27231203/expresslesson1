@@ -22,14 +22,13 @@ const createTodo = async (req: Request, res: Response) => {
   try {
     const { title } = req.body;
     const newTodo = {
-      id: prisma.todo.findMany.length + 1,
       title,
     };
 
     await prisma.todo.create({ data: newTodo });
     res.status(200).send({
       message: "successfyl",
-      data: newTodo,
+      data: await prisma.todo.findMany(),
     });
   } catch (e) {
     res.status(500).send({
