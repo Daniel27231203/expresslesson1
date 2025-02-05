@@ -7,6 +7,7 @@ exports.buildServer = void 0;
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
 const express_1 = __importDefault(require("express"));
+const routes_1 = __importDefault(require("./routes"));
 const buildServer = () => {
     const server = (0, express_1.default)();
     server.use(express_1.default.json());
@@ -15,6 +16,7 @@ const buildServer = () => {
             message: "Hello World",
         });
     });
+    server.use("/api/v1", routes_1.default);
     return server;
 };
 exports.buildServer = buildServer;
