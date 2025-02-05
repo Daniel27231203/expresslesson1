@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
 
-let data: any[] = [];
+const prisma = new PrismaClient();
+
 const getAllTodo = async (req: Request, res: Response) => {
   try {
     res.status(200).send({
       success: true,
-      results: data,
+      results: prisma.todo.findMany(),
     });
   } catch (e) {
     console.log(`error in ${e}`);
@@ -20,14 +22,14 @@ const createTodo = async (req: Request, res: Response) => {
   try {
     const { title } = req.body;
     const newTodo = {
-      id: data.length + 1,
+      id: prisma.todo.findMany.length + 1,
       title,
     };
 
-    data.push(newTodo);
+    prisma.todo.create({ data: newTodo });
     res.status(200).send({
       message: "successfyl",
-      data: data,
+      data: newTodo,
     });
   } catch (e) {
     res.status(500).send({
@@ -41,9 +43,12 @@ const updateTodo = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const { title } = req.body;
 
-    const updatedProduct = data.find((item) => item.id === id);
+    const updatedProduct = await prisma.todo.update({
+      where: { id },
+      data: { title },
+    });
+
     if (updatedProduct) {
-      updatedProduct.title = title;
       res.status(200).send({
         message: "Product updated successfully",
         data: updatedProduct,
@@ -59,8 +64,7 @@ const updateTodo = async (req: Request, res: Response) => {
 const deleteOnTodo = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const newTodo = data.filter((el) => el.id !== id);
-    data = newTodo;
+    const newTodo = prisma.todo.delete({ where: { id } });
     res.status(200).send({
       message: `successfuly deleted`,
       data: newTodo,

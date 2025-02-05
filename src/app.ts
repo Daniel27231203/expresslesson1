@@ -8,7 +8,7 @@ export const buildServer = () => {
 
   server.get("/", (req, res) => {
     res.status(200).send({
-      message: "Hello World",
+      message: "Server is Working",
     });
   });
 

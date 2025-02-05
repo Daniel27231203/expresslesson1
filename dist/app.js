@@ -13,7 +13,7 @@ const buildServer = () => {
     server.use(express_1.default.json());
     server.get("/", (req, res) => {
         res.status(200).send({
-            message: "Hello World",
+            message: "Server is Working",
         });
     });
     server.use("/api/v1", routes_1.default);
