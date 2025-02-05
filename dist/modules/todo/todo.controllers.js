@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const data = [];
+let data = [];
 const getAllTodo = async (req, res) => {
     try {
         res.status(200).send({
@@ -18,11 +18,10 @@ const getAllTodo = async (req, res) => {
 };
 const createTodo = async (req, res) => {
     try {
-        const { title, price } = req.body;
+        const { title } = req.body;
         const newTodo = {
             id: data.length + 1,
             title,
-            price,
         };
         data.push(newTodo);
         res.status(200).send({
@@ -36,14 +35,36 @@ const createTodo = async (req, res) => {
         });
     }
 };
-const deleteOnTodo = async (req, res) => {
-    const id = Number(req.params.id);
+const updateTodo = async (req, res) => {
     try {
-        const deletedProduct = data.filter((el) => el.id == id);
+        const id = Number(req.params.id);
+        const { title } = req.body;
+        const updatedProduct = data.find((item) => item.id === id);
+        // if (!updatedProduct) {
+        //   return res.status(404).send({ message: "Product not found" });
+        // }
+        if (updatedProduct) {
+            updatedProduct.title = title;
+            res.status(200).send({
+                message: "Product updated successfully",
+                data: updatedProduct,
+            });
+        }
+        else {
+            res.status(404).send({ message: "извините но такого продукта нет!" });
+        }
+    }
+    catch (err) {
+        res.status(500).send({ message: "Server error" });
+    }
+};
+const deleteOnTodo = async (req, res) => {
+    try {
+        const id = Number(req.params.id);
         const newTodo = data.filter((el) => el.id !== id);
-        data.push(newTodo);
+        data = newTodo;
         res.status(200).send({
-            message: `successfuly deleted: ${deletedProduct} `,
+            message: `successfuly deleted`,
             data: newTodo,
         });
     }
@@ -57,4 +78,5 @@ exports.default = {
     getAllTodo,
     createTodo,
     deleteOnTodo,
+    updateTodo,
 };
