@@ -4,10 +4,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const getAllTodo = async (req: Request, res: Response) => {
+  const responseData = await prisma.todo.findMany();
   try {
     res.status(200).send({
       success: true,
-      results: await prisma.todo.findMany(),
+      results: responseData,
     });
   } catch (e) {
     console.log(`error in ${e}`);
@@ -25,10 +26,10 @@ const createTodo = async (req: Request, res: Response) => {
       title,
     };
 
-    await prisma.todo.create({ data: newTodo });
+    const responseData = prisma.todo.create({ data: newTodo });
     res.status(200).send({
       message: "successfyl",
-      data: await prisma.todo.findMany(),
+      data: responseData,
     });
   } catch (e) {
     res.status(500).send({

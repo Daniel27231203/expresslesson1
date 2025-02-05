@@ -3,10 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getAllTodo = async (req, res) => {
+    const responseData = await prisma.todo.findMany();
     try {
         res.status(200).send({
             success: true,
-            results: await prisma.todo.findMany(),
+            results: responseData,
         });
     }
     catch (e) {
@@ -23,10 +24,10 @@ const createTodo = async (req, res) => {
         const newTodo = {
             title,
         };
-        await prisma.todo.create({ data: newTodo });
+        const responseData = prisma.todo.create({ data: newTodo });
         res.status(200).send({
             message: "successfyl",
-            data: await prisma.todo.findMany(),
+            data: responseData,
         });
     }
     catch (e) {
