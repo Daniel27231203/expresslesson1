@@ -7,5 +7,6 @@ router.get("/getAll", todoControllers.getAllTodo);
 router.put("/update/:id", todoControllers.updateTodo);
 router.post("/create", todoControllers.createTodo);
 router.delete("/delete/:id", todoControllers.deleteOnTodo);
+router.get("/getById/:id", todoControllers.getOne);
 
 export default router;
