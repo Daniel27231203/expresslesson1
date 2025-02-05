@@ -42,10 +42,6 @@ const updateTodo = async (req: Request, res: Response) => {
     const { title } = req.body;
 
     const updatedProduct = data.find((item) => item.id === id);
-
-    // if (!updatedProduct) {
-    //   return res.status(404).send({ message: "Product not found" });
-    // }
     if (updatedProduct) {
       updatedProduct.title = title;
       res.status(200).send({

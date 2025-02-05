@@ -3,9 +3,9 @@ import cors from "cors";
 import todoRoutes from "../modules/todo/todo.routes";
 const corsConfig = {
   origin: [
-    "https://elcho.dev/",
     "http://localhost:5000",
     "https://localhost:3000",
+    "https://expresslesson1.onrender.com",
   ],
 };
 

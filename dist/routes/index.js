@@ -8,9 +8,9 @@ const cors_1 = __importDefault(require("cors"));
 const todo_routes_1 = __importDefault(require("../modules/todo/todo.routes"));
 const corsConfig = {
     origin: [
-        "https://elcho.dev/",
         "http://localhost:5000",
         "https://localhost:3000",
+        "https://expresslesson1.onrender.com",
     ],
 };
 const router = (0, express_1.Router)();
