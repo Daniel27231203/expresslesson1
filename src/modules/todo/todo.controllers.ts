@@ -19,6 +19,32 @@ const getAllTodo = async (req: Request, res: Response) => {
   }
 };
 
+const searchMany = async (req: Request, res: Response) => {
+  const value = String(req.query.value);
+  if (!value.trim()) {
+    return res.status(400).send({
+      success: false,
+      message: "value is required",
+    });
+  }
+  try {
+    const responseData = await prisma.todo.findMany();
+    const response = responseData.filter((el) =>
+      el.title.toLowerCase().includes(value?.toLowerCase())
+    );
+    res.status(200).send({
+      success: true,
+      results: response,
+    });
+  } catch (e) {
+    console.log(`error in ${e}`);
+    res.status(500).send({
+      success: false,
+      message: "Error fetching todos",
+    });
+  }
+};
+
 const createTodo = async (req: Request, res: Response) => {
   try {
     const { title } = req.body;
@@ -93,10 +119,21 @@ const deleteOnTodo = async (req: Request, res: Response) => {
   }
 };
 
+const deleteAll = async (req: Request, res: Response) => {
+  try {
+    await prisma.todo.deleteMany();
+    res.status(200).send({ message: "All todos deleted successfully" });
+  } catch (e) {
+    res.status(500).send({ message: "Server error" });
+  }
+};
+
 export default {
   getAllTodo,
   createTodo,
   deleteOnTodo,
   updateTodo,
   getOne,
+  searchMany,
+  deleteAll,
 };

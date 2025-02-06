@@ -18,6 +18,30 @@ const getAllTodo = async (req, res) => {
         });
     }
 };
+const searchMany = async (req, res) => {
+    const value = String(req.query.value);
+    if (!value.trim()) {
+        return res.status(400).send({
+            success: false,
+            message: "value is required",
+        });
+    }
+    try {
+        const responseData = await prisma.todo.findMany();
+        const response = responseData.filter((el) => el.title.toLowerCase().includes(value?.toLowerCase()));
+        res.status(200).send({
+            success: true,
+            results: response,
+        });
+    }
+    catch (e) {
+        console.log(`error in ${e}`);
+        res.status(500).send({
+            success: false,
+            message: "Error fetching todos",
+        });
+    }
+};
 const createTodo = async (req, res) => {
     try {
         const { title } = req.body;
@@ -97,4 +121,5 @@ exports.default = {
     deleteOnTodo,
     updateTodo,
     getOne,
+    searchMany,
 };

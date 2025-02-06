@@ -16,6 +16,9 @@ datasource db {
 model Todo {
   id        Int   @id @default(autoincrement())
   title      String
+  // prise Int
+  // description String
+  // image String
   isCompleted Boolean @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
