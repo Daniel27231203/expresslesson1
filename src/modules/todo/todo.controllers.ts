@@ -47,14 +47,17 @@ const searchMany = async (req: Request, res: Response) => {
 
 const createTodo = async (req: Request, res: Response) => {
   try {
-    const { title } = req.body;
+    const { title, price, image, description } = req.body;
     const newTodo = {
       title,
+      price: price,
+      image,
+      description,
     };
 
     const responseData = await prisma.todo.create({ data: newTodo });
     res.status(200).send({
-      message: "successfyl",
+      message: "successfully created todo",
       data: responseData,
     });
   } catch (e) {
@@ -84,11 +87,11 @@ const getOne = async (req: Request, res: Response) => {
 const updateTodo = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const { title } = req.body;
+    const { title, price, image, description } = req.body;
 
     const updatedProduct = await prisma.todo.update({
       where: { id },
-      data: { title },
+      data: { title, price: price, image, description },
     });
 
     if (updatedProduct) {

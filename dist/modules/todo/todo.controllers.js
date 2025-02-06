@@ -44,13 +44,16 @@ const searchMany = async (req, res) => {
 };
 const createTodo = async (req, res) => {
     try {
-        const { title } = req.body;
+        const { title, price, image, description } = req.body;
         const newTodo = {
             title,
+            price: price,
+            image,
+            description,
         };
         const responseData = await prisma.todo.create({ data: newTodo });
         res.status(200).send({
-            message: "successfyl",
+            message: "successfully created todo",
             data: responseData,
         });
     }
@@ -81,10 +84,10 @@ const getOne = async (req, res) => {
 const updateTodo = async (req, res) => {
     try {
         const id = Number(req.params.id);
-        const { title } = req.body;
+        const { title, price, image, description } = req.body;
         const updatedProduct = await prisma.todo.update({
             where: { id },
-            data: { title },
+            data: { title, price: price, image, description },
         });
         if (updatedProduct) {
             res.status(200).send({
@@ -115,6 +118,15 @@ const deleteOnTodo = async (req, res) => {
         });
     }
 };
+const deleteAll = async (req, res) => {
+    try {
+        await prisma.todo.deleteMany();
+        res.status(200).send({ message: "All todos deleted successfully" });
+    }
+    catch (e) {
+        res.status(500).send({ message: "Server error" });
+    }
+};
 exports.default = {
     getAllTodo,
     createTodo,
@@ -122,4 +134,5 @@ exports.default = {
     updateTodo,
     getOne,
     searchMany,
+    deleteAll,
 };
