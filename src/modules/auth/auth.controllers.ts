@@ -30,7 +30,7 @@ const registerUser = async (req: Request, res: Response) => {
     res.json({ message: "Success sign-up", accessToken: token });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Errorr" });
   }
 };
 
