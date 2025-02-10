@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+
 const bcrypt = require("bcryptjs");
 import dotenv from "dotenv";
 
@@ -23,7 +24,7 @@ const registerUser = async (req: Request, res: Response) => {
       data: { email, password: hashPassword, name, profilePhoto },
     });
 
-    const token = jwt.sign({ email }, process.env.JWT_SECRET as string, {
+    const token = await jwt.sign({ email }, process.env.JWT_SECRET as string, {
       expiresIn: "1h",
     });
 
@@ -34,34 +35,41 @@ const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-// const login = async (req: Request, res: Response) => {
-//   const { email, password } = req.body;
-//   const user = data.find((u) => u.email === email);
-//   if (!user || !(await bcrypt.compare(user.password, password)))
-//     res.status(401).json({ message: "Invalid credentials" });
+const login = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
-//   const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-//     expiresIn: "1h",
-//   });
-//   res.json({ message: "success login", token });
-// };
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    res.status(401).json({ message: "Invalid credentials" });
+  }
 
-// const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-//   const authHeader = req.headers["authorization"];
-//   const token = authHeader && authHeader.split(" ")[1];
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined");
+  }
 
-//   if (!token) return res.status(401).json({ message: "Access denied" });
+  const token = await jwt.sign({ email }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
 
-//   jwt.verify(token, process.env.JWT_SECRET as string, (err, email) => {
-//     if (err) return res.status(403).json({ message: "Invalid token" });
+  res.json({ message: "success login", token });
+};
 
-//     (req as any).email = email;
-//     next();
-//   });
-// };
+const getProfile = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const email = req.email;
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
 
+    if (!user) res.status(404).json({ message: "User not found" });
+
+    res.json({ message: "it's your profile", user });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Server Errorr" });
+  }
+};
 export default {
   registerUser,
-  //   login,
-  //   authenticateToken,
+  login,
+  getProfile,
 };

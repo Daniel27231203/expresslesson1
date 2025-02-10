@@ -30,4 +30,5 @@ model User {
   email    String @unique
   password String
   profilePhoto String
+  isAdmin Boolean @default(false)
 }
