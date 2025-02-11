@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, response } from "express";
 import jwt from "jsonwebtoken";
 
 interface AuthRequest extends Request {
@@ -31,4 +31,17 @@ export const authMiddleware = (
   } catch (error) {
     res.status(401).json({ error: "Invalid token" });
   }
+};
+
+export const adminMiddleware = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): void => {
+  const myEmail = req.email; // Проверяем email в user, а не в body
+  console.log("🚀 ~ myEmail:", myEmail);
+  if (myEmail !== "daniel@gmail.com") {
+    res.status(401).json({ error: "У вас нет доступа" });
+  }
+  next();
 };

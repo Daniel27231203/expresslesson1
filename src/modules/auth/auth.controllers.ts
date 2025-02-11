@@ -68,8 +68,41 @@ const getProfile = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server Errorr" });
   }
 };
+
+const getAllProfile = async (req: Request, res: Response) => {
+  try {
+    const user = await prisma.user.findMany();
+    res
+      .status(200)
+      .send({ messege: "This is all users on your server", users: user });
+  } catch (e) {
+    res
+      .status(404)
+      .send({ messege: `что то пошло не так ================= ${e}` });
+  }
+};
+
+const deleteAccount = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  // @ts-ignore
+  const userId = req.user.id;
+  console.log("🚀 ~ deleteAccount ~ userId:", userId);
+
+  if (id === userId) {
+    res.status(403).json({ message: "вы не можете удалить сам себя" });
+    return; // Закрываем функцию, если у пользователя нет права на удаление аккаунта.
+  }
+  try {
+    await prisma.user.deleteMany({ where: { id: id } });
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (e) {
+    res.status(500).json({ message: "Server Errorr" });
+  }
+};
 export default {
   registerUser,
   login,
   getProfile,
+  getAllProfile,
+  deleteAccount,
 };
