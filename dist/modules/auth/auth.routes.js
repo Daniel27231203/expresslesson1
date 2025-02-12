@@ -12,4 +12,5 @@ router.post("/login", auth_controllers_1.default.login);
 router.get("/getProfile", midleware_1.authMiddleware, auth_controllers_1.default.getProfile);
 router.get("/getAllProfile", midleware_1.authMiddleware, midleware_1.adminMiddleware, auth_controllers_1.default.getAllProfile);
 router.delete("/deleteAccount/:id", midleware_1.authMiddleware, midleware_1.adminMiddleware, auth_controllers_1.default.deleteAccount);
+router.delete("/deleteAllAccount", midleware_1.authMiddleware, midleware_1.adminMiddleware, auth_controllers_1.default.deleteAll);
 exports.default = router;

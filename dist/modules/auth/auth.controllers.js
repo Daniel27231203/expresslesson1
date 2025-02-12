@@ -49,7 +49,12 @@ const getProfile = async (req, res) => {
     // @ts-ignore
     const email = req.email;
     try {
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findUnique({
+            where: { email },
+            include: {
+                products: true,
+            },
+        });
         if (!user)
             res.status(404).json({ message: "User not found" });
         res.json({ message: "it's your profile", user });
@@ -61,7 +66,11 @@ const getProfile = async (req, res) => {
 };
 const getAllProfile = async (req, res) => {
     try {
-        const user = await prisma.user.findMany();
+        const user = await prisma.user.findMany({
+            include: {
+                products: true,
+            },
+        });
         res
             .status(200)
             .send({ messege: "This is all users on your server", users: user });
@@ -74,16 +83,28 @@ const getAllProfile = async (req, res) => {
 };
 const deleteAccount = async (req, res) => {
     const id = Number(req.params.id);
-    // @ts-ignore
-    const userId = req.user.id;
+    const userId = await prisma.user.findUnique({ where: { id: id } });
     console.log("🚀 ~ deleteAccount ~ userId:", userId);
-    if (id === userId) {
-        res.status(403).json({ message: "вы не можете удалить сам себя" });
-        return; // Закрываем функцию, если у пользователя нет права на удаление аккаунта.
+    if (!userId) {
+        res.status(403).json({ message: "user not found" });
+        return;
+    }
+    if (userId?.email === "daniel@gmail.com") {
+        res.status(404).json({ message: "вы не можете удалить сам себя" });
+        return;
     }
     try {
         await prisma.user.deleteMany({ where: { id: id } });
         res.status(200).json({ message: "Account deleted successfully" });
+    }
+    catch (e) {
+        res.status(500).json({ message: "Server Errorr" });
+    }
+};
+const deleteAll = async (req, res) => {
+    try {
+        await prisma.user.deleteMany();
+        res.status(200).json({ message: "All users deleted successfully" });
     }
     catch (e) {
         res.status(500).json({ message: "Server Errorr" });
@@ -95,4 +116,5 @@ exports.default = {
     getProfile,
     getAllProfile,
     deleteAccount,
+    deleteAll,
 };
