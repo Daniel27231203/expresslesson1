@@ -18,5 +18,10 @@ router.delete(
   adminMiddleware,
   authControllers.deleteAccount
 );
-
+router.delete(
+  "/deleteAllAccount",
+  authMiddleware,
+  adminMiddleware,
+  authControllers.deleteAll
+);
 export default router;

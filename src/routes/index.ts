@@ -14,5 +14,4 @@ const router = Router();
 
 router.use("/todo", cors(corsConfig), todoRoutes);
 router.use("/auth", cors(corsConfig), AuthRoutes);
-
 export default router;
