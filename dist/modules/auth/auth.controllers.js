@@ -43,7 +43,7 @@ const login = async (req, res) => {
     const token = await jsonwebtoken_1.default.sign({ email }, process.env.JWT_SECRET, {
         expiresIn: "1h",
     });
-    res.json({ message: "success login", token });
+    res.json({ message: "success login", accessToken: token });
 };
 const getProfile = async (req, res) => {
     // @ts-ignore
@@ -57,7 +57,7 @@ const getProfile = async (req, res) => {
         });
         if (!user)
             res.status(404).json({ message: "User not found" });
-        res.json({ message: "it's your profile", user });
+        res.json({ message: "it's your profile", data: user });
     }
     catch (e) {
         console.error(e);

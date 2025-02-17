@@ -51,7 +51,7 @@ const login = async (req: Request, res: Response) => {
     expiresIn: "1h",
   });
 
-  res.json({ message: "success login", token });
+  res.json({ message: "success login", accessToken: token });
 };
 
 const getProfile = async (req: Request, res: Response) => {
@@ -67,7 +67,7 @@ const getProfile = async (req: Request, res: Response) => {
 
     if (!user) res.status(404).json({ message: "User not found" });
 
-    res.json({ message: "it's your profile", user });
+    res.json({ message: "it's your profile", data: user });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Server Errorr" });
