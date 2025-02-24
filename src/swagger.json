@@ -43,16 +43,20 @@
                 "type": "object",
                 "properties": {
                   "email": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "email"
                   },
                   "password": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "password"
                   },
                   "name": {
                     "type": "string"
                   },
                   "profilePhoto": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Ссылка на фото профиля (необязательно)"
                   }
                 },
                 "required": ["email", "password", "name"]
@@ -69,10 +73,44 @@
                   "type": "object",
                   "properties": {
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Пользователь успешно зарегистрирован"
                     },
                     "accessToken": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка валидации или некорректные данные",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Некорректный email или пароль"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Пользователь с таким email уже существует",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Этот email уже используется"
                     }
                   }
                 }
@@ -215,7 +253,7 @@
         }
       }
     },
-    "/getAllProfile": {
+    "auth/getAllProfile": {
       "get": {
         "summary": "Получить всех пользователей (только для админа)",
         "tags": ["User"],
@@ -332,7 +370,7 @@
         }
       }
     },
-    "/deleteAccount/{id}": {
+    "auth/deleteAccount/{id}": {
       "delete": {
         "summary": "Удалить аккаунт по ID (только для админа)",
         "tags": ["User"],
@@ -388,7 +426,7 @@
         }
       }
     },
-    "/deleteAllAccount": {
+    "auth/deleteAllAccount": {
       "delete": {
         "summary": "Удалить все аккаунты (только для админа)",
         "tags": ["User"],
@@ -433,7 +471,6 @@
         }
       }
     },
-
     "/todo/getAll": {
       "get": {
         "summary": "Получить все задачи",
