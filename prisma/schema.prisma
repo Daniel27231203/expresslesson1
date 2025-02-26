@@ -23,15 +23,25 @@ model User {
   products      Products[] 
 }
 
+enum Category {
+  GADGETS
+  TECHNICS
+  CLOTHES_MEN
+  CLOTHES_WOMEN
+  CONSTRUCTION_EQUIPMENT
+  BOOKS
+}
+
 model Products {
   id          Int      @id @default(autoincrement())
   title       String
   price       Int
   description String
   image       String
-  authorEmail String   // Меняем на email
-  author      User     @relation(fields: [authorEmail], references: [email], onDelete: Cascade) 
+  authorEmail String   
+  author      User     @relation(fields: [authorEmail], references: [email], onDelete: Cascade)
   isCompleted Boolean  @default(false)
+  category    Category
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

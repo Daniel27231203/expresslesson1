@@ -6,6 +6,7 @@ const router = Router();
 router.post("/register", authControllers.registerUser);
 router.post("/login", authControllers.login);
 router.get("/getProfile", authMiddleware, authControllers.getProfile);
+router.put("/updateProfile", authMiddleware, authControllers.updateProfile);
 router.get(
   "/getAllProfile",
   authMiddleware,
@@ -24,4 +25,5 @@ router.delete(
   adminMiddleware,
   authControllers.deleteAll
 );
+
 export default router;

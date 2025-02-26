@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Category } from "@prisma/client";
 import { AuthRequest } from "../../types/schema";
 
 const prisma = new PrismaClient();
@@ -74,42 +74,89 @@ const createProducts = async (
   next: NextFunction
 ) => {
   try {
-    const { title, price, image, description } = req.body;
-    const userEmail = req.email; // Берем email из мидлвары
+    const { title, price, image, description, category } = req.body;
+    const userEmail = req.email;
 
     if (!userEmail) throw new Error("User email is required");
+
+    if (!title || !price || !description || !category) {
+      throw res.status(400).json({ message: "All fields are required" });
+    }
+
+    const validCategories = [
+      "GADGETS",
+      "TECHNICS",
+      "CLOTHES_MEN",
+      "CLOTHES_WOMEN",
+      "CONSTRUCTION_EQUIPMENT",
+      "BOOKS",
+    ];
+
+    if (!validCategories.includes(category)) {
+      throw res.status(400).json({ message: "Invalid category value" });
+    }
 
     const user = await prisma.user.findUnique({
       where: { email: userEmail },
     });
 
-    if (!user) throw new Error("User not found");
+    if (!user) {
+      throw res.status(404).json({ message: "User not found" });
+    }
 
     const newProduct = await prisma.products.create({
       data: {
         title,
-        price: Number(price), // Приводим к числу
+        price: Number(price),
         image,
         description,
-        authorEmail: user.email, // Теперь связываем по email
+        category,
+        authorEmail: user.email,
       },
     });
 
-    res
-      .status(201)
-      .json({ message: "Product created successfully", data: newProduct });
+    res.status(201).json({
+      message: "Product created successfully",
+      data: newProduct,
+    });
   } catch (e) {
-    next(e);
+    res.status(500).json({ message: "server error", error: e });
   }
 };
+
 // ? createProduct end
 
 // ? update product start
 const updateProducts = async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const { title, price, image, description } = req.body;
+    const { title, price, image, description, category } = req.body;
     const userEmail = req.email;
+
+    if (isNaN(id)) {
+      throw res.status(400).json({ message: "Некорректный ID продукта" });
+    }
+
+    if (!title || !description || !price || !category) {
+      throw res
+        .status(400)
+        .json({ message: "Все поля обязательны для заполнения" });
+    }
+
+    const validCategories = [
+      "GADGETS",
+      "TECHNICS",
+      "CLOTHES_MEN",
+      "CLOTHES_WOMEN",
+      "CONSTRUCTION_EQUIPMENT",
+      "BOOKS",
+    ];
+
+    if (!validCategories.includes(category)) {
+      throw res
+        .status(400)
+        .json({ message: "Недопустимое значение категории" });
+    }
 
     const product = await prisma.products.findUnique({
       where: { id },
@@ -128,7 +175,13 @@ const updateProducts = async (req: AuthRequest, res: Response) => {
 
     const updatedProduct = await prisma.products.update({
       where: { id },
-      data: { title, price, image, description },
+      data: {
+        title,
+        price: Number(price),
+        image,
+        description,
+        category,
+      },
     });
 
     res.status(200).json({
@@ -214,6 +267,59 @@ const deleteAll = async (req: Request, res: Response) => {
 
 // ? deleteProduct end
 
+// ? getProducts By Category
+
+const getProductsByCategory = async (req: Request, res: Response) => {
+  const category = req.params.category as Category; // Cast to the enum type
+  console.log("🚀 ~ getProductsByCategory ~ category:", category);
+  if (!category) {
+    throw res.status(400).send({
+      success: false,
+      message: "Category is required",
+    });
+  }
+  const validCategories = [
+    "GADGETS",
+    "TECHNICS",
+    "CLOTHES_MEN",
+    "CLOTHES_WOMEN",
+    "CONSTRUCTION_EQUIPMENT",
+    "BOOKS",
+  ];
+
+  if (!validCategories.includes(category)) {
+    throw res.status(400).json({ message: "Недопустимое значение категории" });
+  }
+  try {
+    const responseData = await prisma.products.findMany({
+      where: { category },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profilePhoto: true,
+            isAdmin: true,
+          },
+        },
+      },
+    });
+    res.status(200).send({
+      success: true,
+      results: responseData,
+    });
+  } catch (e) {
+    console.log(`error in ${e}`);
+    res.status(500).send({
+      success: false,
+      message: "Error fetching products",
+    });
+  }
+};
+
+// ? getProducts By Category
+
 // ! didnt work
 /* const searchMany = async (req: Request, res: Response) => {
   const value = String(req.query.value);
@@ -272,6 +378,7 @@ export default {
   getOne,
   deleteAll,
   deleteAllUserProducts,
+  getProductsByCategory,
   // searchMany,
   // getUserProducts,
 };

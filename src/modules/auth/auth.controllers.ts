@@ -121,6 +121,42 @@ const deleteAll = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server Errorr" });
   }
 };
+
+const updateProfile = async (req: Request, res: Response) => {
+  const { email, profilePhoto, name } = req.body;
+
+  // @ts-ignore
+  const userEmail = req.email;
+  console.log("🚀 ~ updateProfile ~ userEmail:", userEmail);
+
+  if (!userEmail) {
+    res.status(401).json({ message: "User not authenticated" });
+  }
+
+  try {
+    const updatedData = {
+      email: email,
+      profilePhoto: profilePhoto,
+      name: name,
+    };
+
+    const updatedUser = await prisma.user.update({
+      where: { email: userEmail },
+      data: updatedData,
+    });
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ message: "Error updating profile", error });
+  }
+};
+
+export { updateProfile };
+
 export default {
   registerUser,
   login,
@@ -128,4 +164,5 @@ export default {
   getAllProfile,
   deleteAccount,
   deleteAll,
+  updateProfile,
 };

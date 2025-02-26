@@ -7,12 +7,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000/api/v1",
-      "description": "Локальный сервер"
-    },
-    {
       "url": "https://expresslesson1-last.onrender.com/api/v1",
       "description": "Продакшн сервер"
+    },
+    {
+      "url": "http://localhost:5000/api/v1",
+      "description": "local сервер"
     }
   ],
   "components": {
@@ -253,7 +253,7 @@
         }
       }
     },
-    "auth/getAllProfile": {
+    "/auth/getAllProfile": {
       "get": {
         "summary": "Получить всех пользователей (только для админа)",
         "tags": ["User"],
@@ -370,7 +370,7 @@
         }
       }
     },
-    "auth/deleteAccount/{id}": {
+    "/auth/deleteAccount/{id}": {
       "delete": {
         "summary": "Удалить аккаунт по ID (только для админа)",
         "tags": ["User"],
@@ -426,7 +426,7 @@
         }
       }
     },
-    "auth/deleteAllAccount": {
+    "/auth/deleteAllAccount": {
       "delete": {
         "summary": "Удалить все аккаунты (только для админа)",
         "tags": ["User"],
@@ -471,6 +471,86 @@
         }
       }
     },
+    "/updateProfile": {
+      "put": {
+        "summary": "Обновить профиль пользователя",
+        "operationId": "updateProfile",
+        "tags": ["User"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "doni@gmail.com"
+                  },
+                  "profilePhoto": {
+                    "type": "string",
+                    "example": "https://uznayvse.ru/images/content/2023/7/24/singer-doni_88.jpg"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "doni"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Профиль успешно обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Profile updated successfully"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 15
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "balancha"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "Balancha@gmail.com"
+                        },
+                        "profilePhoto": {
+                          "type": "string",
+                          "example": "https://uznayvse.ru/images/content/2023/7/24/singer-doni_88.jpg"
+                        },
+                        "isAdmin": {
+                          "type": "boolean",
+                          "example": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/todo/getAll": {
       "get": {
         "summary": "Получить все задачи",
@@ -923,6 +1003,114 @@
                         "updatedAt": {
                           "type": "string",
                           "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo/getByCategory/{category}": {
+      "get": {
+        "summary": "Получить задачи по категории",
+        "operationId": "getProductsByCategory",
+        "tags": ["Todo"],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GADGETS",
+                "TECHNICS",
+                "CLOTHES_MEN",
+                "CLOTHES_WOMEN",
+                "CONSTRUCTION_EQUIPMENT",
+                "BOOKS"
+              ]
+            },
+            "description": "Категория товара, по которой нужно получить задачи"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список задач по категории",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "price": {
+                            "type": "number"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "image": {
+                            "type": "string"
+                          },
+                          "authorEmail": {
+                            "type": "string"
+                          },
+                          "isCompleted": {
+                            "type": "boolean"
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "author": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "profilePhoto": {
+                                "type": "string"
+                              },
+                              "isAdmin": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
                         }
                       }
                     }

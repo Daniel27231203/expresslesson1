@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateProfile = void 0;
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt = require("bcryptjs");
@@ -110,6 +111,35 @@ const deleteAll = async (req, res) => {
         res.status(500).json({ message: "Server Errorr" });
     }
 };
+const updateProfile = async (req, res) => {
+    const { email, profilePhoto, name } = req.body;
+    // @ts-ignore
+    const userEmail = req.email;
+    console.log("🚀 ~ updateProfile ~ userEmail:", userEmail);
+    if (!userEmail) {
+        res.status(401).json({ message: "User not authenticated" });
+    }
+    try {
+        const updatedData = {
+            email: email,
+            profilePhoto: profilePhoto,
+            name: name,
+        };
+        const updatedUser = await prisma.user.update({
+            where: { email: userEmail },
+            data: updatedData,
+        });
+        res.status(200).json({
+            message: "Profile updated successfully",
+            user: updatedUser,
+        });
+    }
+    catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ message: "Error updating profile", error });
+    }
+};
+exports.updateProfile = updateProfile;
 exports.default = {
     registerUser,
     login,
@@ -117,4 +147,5 @@ exports.default = {
     getAllProfile,
     deleteAccount,
     deleteAll,
+    updateProfile,
 };
