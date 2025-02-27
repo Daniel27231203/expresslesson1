@@ -5,6 +5,7 @@ import routes from "./routes";
 import swaggerUi from "swagger-ui-express";
 import path from "path";
 import { readFileSync } from "fs";
+import cors from "cors";
 
 const swaggerPath = path.join(process.cwd(), "src", "swagger.json");
 
@@ -13,6 +14,9 @@ const swaggerDocumentation = JSON.parse(readFileSync(swaggerPath, "utf-8"));
 export const buildServer = () => {
   const server = express();
   server.use(express.json());
+  server.use(
+    cors({ origin: ["http://localhost:5173", "http://localhost:3000"] })
+  );
 
   server.use(
     "/api-docs",
