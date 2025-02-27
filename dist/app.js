@@ -11,11 +11,13 @@ const routes_1 = __importDefault(require("./routes"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = require("fs");
+const cors_1 = __importDefault(require("cors"));
 const swaggerPath = path_1.default.join(process.cwd(), "src", "swagger.json");
 const swaggerDocumentation = JSON.parse((0, fs_1.readFileSync)(swaggerPath, "utf-8"));
 const buildServer = () => {
     const server = (0, express_1.default)();
     server.use(express_1.default.json());
+    server.use((0, cors_1.default)({ origin: ["http://localhost:5173", "http://localhost:3000"] }));
     server.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocumentation));
     server.get("/swagger.json", (req, res) => {
         res.status(200).json(swaggerDocumentation);
