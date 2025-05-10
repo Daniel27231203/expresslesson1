@@ -471,7 +471,7 @@
         }
       }
     },
-    "/updateProfile": {
+    "auth/updateProfile": {
       "put": {
         "summary": "Обновить профиль пользователя",
         "operationId": "updateProfile",
