@@ -15,7 +15,13 @@ export const buildServer = () => {
   const server = express();
   server.use(express.json());
   server.use(
-    cors({ origin: ["http://localhost:5173", "http://localhost:3000"] })
+    cors({
+      origin: [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:5000",
+      ],
+    })
   );
 
   server.use(

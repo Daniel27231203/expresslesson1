@@ -758,9 +758,26 @@
                   },
                   "description": {
                     "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "GADGETS",
+                      "TECHNICS",
+                      "CLOTHES_MEN",
+                      "CLOTHES_WOMEN",
+                      "CONSTRUCTION_EQUIPMENT",
+                      "BOOKS"
+                    ]
                   }
                 },
-                "required": ["title", "price", "image", "description"]
+                "required": [
+                  "title",
+                  "price",
+                  "image",
+                  "description",
+                  "category"
+                ]
               }
             }
           }
@@ -793,6 +810,17 @@
                         },
                         "description": {
                           "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "enum": [
+                            "GADGETS",
+                            "TECHNICS",
+                            "CLOTHES_MEN",
+                            "CLOTHES_WOMEN",
+                            "CONSTRUCTION_EQUIPMENT",
+                            "BOOKS"
+                          ]
                         },
                         "completed": {
                           "type": "boolean"

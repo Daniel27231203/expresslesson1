@@ -79,7 +79,7 @@ const createProducts = async (
 
     if (!userEmail) throw new Error("User email is required");
 
-    if (!title || !price || !description || !category) {
+    if (!title || !price || !description) {
       throw res.status(400).json({ message: "All fields are required" });
     }
 
